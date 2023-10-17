@@ -1,6 +1,7 @@
 let game = document.querySelector(".game");
 let cells = document.querySelectorAll(".cell");
 let scoreEl = document.querySelector("#score");
+let highScoreEl = document.querySelector("#highScore");
 let cellsObj = [];
 let score = 0;
 for (let i=0; i<cells.length; i++) {cellsObj.push(0);}
@@ -25,6 +26,7 @@ function updateBoard() {
     if (scoreEl.innerHTML !== score)
     {
         scoreEl.innerHTML = score;
+        highScoreEl.innerHTML = score > Number(highScoreEl.innerHTML) ? score : highScoreEl.innerHTML;
 
     }
     for (let i = 0; i < cells.length; i++) {
@@ -307,8 +309,25 @@ function updateCellSize() {
 
     const score = document.querySelector('.score');
     score.style.fontSize = (cellSize * 0.3) + 'px';
+    const highscore = document.querySelector('.highScore');
+    highscore.style.fontSize = (cellSize * 0.3) + 'px';
+    const restartButton = document.querySelector('.restartButton');
+    restartButton.style.fontSize = (cellSize * 0.3) + 'px';
+    restartButton.style.borderRadius = cellSize / 5 + 'px';
 }
 
 // Update cell size initially and on window resize
 window.addEventListener('resize', updateCellSize);
 window.addEventListener('load', updateCellSize);
+document.querySelector('.restartButton').addEventListener('click', () => {
+    cells.forEach(cell => {
+        cell.className = 'cell';
+        cell.innerHTML = '';
+    });
+    cellsObj = [];
+    for (let i=0; i<cells.length; i++) {cellsObj.push(0);}
+    generateNewCell();
+    generateNewCell();
+    score = 0;
+    updateBoard();
+})
