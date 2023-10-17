@@ -71,6 +71,7 @@ function isIInEveryNthElement(arr, i, n) {
     return false;
 }
 
+let movedCells = false;
 function moveCells(direction) {
     const gridSize = 4; // Assuming a 4x4 grid, change this if your grid size is different
 
@@ -245,7 +246,14 @@ function moveCells(direction) {
         }
     }
 
-    updateBoard();
+    if (!movedCells) {
+        movedCells = true;
+        moveCells(direction);
+    } else {
+        movedCells = false;
+        updateBoard();
+        return;
+    }
 }
 
 let keydownCheck = false;
