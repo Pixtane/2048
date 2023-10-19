@@ -6,6 +6,18 @@ let cellsObj = [];
 let score = 0;
 for (let i=0; i<cells.length; i++) {cellsObj.push(0);}
 
+function loadScore()
+{
+    highScoreEl.innerHTML = localStorage.getItem("highscore");
+    if (highScoreEl.innerHTML == null)
+    {
+        highScoreEl.innerHTML = "0";
+        localStorage.setItem("highscore", 0);
+    }
+}
+
+loadScore();
+
 let colors = {
     0: {background: "#CCC0B3", foreground: "#776E65"},
     2: {background: "#EEE4DA", foreground: "#776E65"},
@@ -26,7 +38,11 @@ function updateBoard() {
     if (scoreEl.innerHTML !== score)
     {
         scoreEl.innerHTML = score;
-        highScoreEl.innerHTML = score > Number(highScoreEl.innerHTML) ? score : highScoreEl.innerHTML;
+        if (Number(highScoreEl.innerHTML) < score)
+        {
+            highScoreEl.innerHTML = score;
+            localStorage.setItem("highscore", score);
+        }
 
     }
     for (let i = 0; i < cells.length; i++) {
@@ -76,6 +92,7 @@ function isIInEveryNthElement(arr, i, n) {
 let movedCells = false;
 function moveCells(direction) {
     const gridSize = 4; // Assuming a 4x4 grid, change this if your grid size is different
+    let anyCellsMoved = false;
 
     // Define movement vectors based on the direction
     const vectors = {
@@ -105,11 +122,13 @@ function moveCells(direction) {
                     cellsObj[tempIndex - gridSize] = cell;
                     cellsObj[tempIndex] = 0;
                     tempIndex -= gridSize;
+                    anyCellsMoved = true;
                 } else if (cellsObj[tempIndex - gridSize] === cell) {
                     cellsObj[tempIndex - gridSize] *= 2;
                     cellsObj[tempIndex] = 0;
                     tempIndex -= gridSize;
                     score += cellsObj[tempIndex];
+                    anyCellsMoved = true;
                 } 
                 else {
                     break;
@@ -140,11 +159,13 @@ function moveCells(direction) {
                     cellsObj[tempIndex + gridSize] = cell;
                     cellsObj[tempIndex] = 0;
                     tempIndex += gridSize;
+                    anyCellsMoved = true;
                 } else if (cellsObj[tempIndex + gridSize] === cell) {
                     cellsObj[tempIndex + gridSize] *= 2;
                     cellsObj[tempIndex] = 0;
                     tempIndex += gridSize;
                     score += cellsObj[tempIndex];
+                    anyCellsMoved = true;
                 } 
                 else {
                     break;
@@ -184,11 +205,13 @@ function moveCells(direction) {
                     cellsObj[tempIndex - 1] = cell;
                     cellsObj[tempIndex] = 0;
                     tempIndex--;
+                    anyCellsMoved = true;
                 } else if (cellsObj[tempIndex - 1] === cell) {
                     cellsObj[tempIndex - 1] *= 2;
                     cellsObj[tempIndex] = 0;
                     tempIndex--;
                     score += cellsObj[tempIndex];
+                    anyCellsMoved = true;
                 } 
                 else {
                     break;
@@ -232,11 +255,13 @@ function moveCells(direction) {
                     cellsObj[tempIndex + 1] = cell;
                     cellsObj[tempIndex] = 0;
                     tempIndex++;
+                    anyCellsMoved = true;
                 } else if (cellsObj[Number(tempIndex) + 1] === cell) {
                     cellsObj[tempIndex + 1] *= 2;
                     cellsObj[tempIndex] = 0;
                     tempIndex++;
                     score += cellsObj[tempIndex];
+                    anyCellsMoved = true;
                 } 
                 else {
                     break;
@@ -256,6 +281,11 @@ function moveCells(direction) {
         updateBoard();
         return;
     }
+
+    if (anyCellsMoved)
+    {
+        generateNewCell();
+    }
 }
 
 let keydownCheck = false;
@@ -265,19 +295,15 @@ document.addEventListener("keydown", (e) => {
     keydownCheck = true;
     if (e.key === "ArrowUp") {
         moveCells("up");
-        generateNewCell();
     }
     if (e.key === "ArrowDown") {
         moveCells("down");
-        generateNewCell();
     }
     if (e.key === "ArrowLeft") {
         moveCells("left");
-        generateNewCell();
     }
     if (e.key === "ArrowRight") {
         moveCells("right");
-        generateNewCell();
     }
 })
 
